@@ -11,7 +11,11 @@ def get_top_level_packages():
     for package in installed_packages:
         # use pip show to get package details
         result = subprocess.run(['pip', 'show', package], capture_output=True)
-        output = result.stdout.decode('utf-8')
+        try:
+            output = result.stdout.decode('utf-8')
+        except UnicodeDecodeError:
+            # Handle decoding errors, e.g., replace invalid characters
+            output = result.stdout.decode('utf-8', errors='replace')
 
         # Check if 'Required by' line is empty
         if 'Required-by:' in output:
